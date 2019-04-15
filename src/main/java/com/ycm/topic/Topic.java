@@ -1,17 +1,21 @@
 package com.ycm.topic;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
 import lombok.Data;
 
 @Data
+@Entity
 public class Topic {
 
-    private String id;
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    private Integer id;
+
     private String name;
     private String description;
 
-    public Topic(String id, String name, String description) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-    }
 }

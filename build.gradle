@@ -65,6 +65,10 @@ dependencies {
     //core spring boot (minimal set)
     implementation('org.springframework.boot:spring-boot-starter')
     implementation('org.springframework.boot:spring-boot-starter-web')
+    implementation('org.springframework.boot:spring-boot-starter-data-jpa')
+
+    //core database
+    compile 'mysql:mysql-connector-java'
 
     //core productivity
     implementation('org.projectlombok:lombok') //on intellij we need to install lombok plugin to support that
@@ -75,6 +79,14 @@ dependencies {
 }
 
 //task bootRun automatically works thanks to @SpringBootApplication
+
+/*
+TODO: if we want to change the boot jar name?
+bootJar {
+    baseName = 'gs-accessing-data-mysql'
+    version =  '0.1.0'
+}
+*/
 
 //task Run needs this declaration
 mainClassName = 'com.ycm.Application'
