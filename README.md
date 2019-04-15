@@ -13,7 +13,8 @@ Prepare the Environment
   * `create user 'user1'@'%' identified by 'password';`
   * `grant all on playground.* to 'user1'@'%';`
   * the 3 sqls above creates a database, a user, allows it from any host to connect, grant all privileges
-* now note that the database is currently empty
+* now note that the playground database is currently empty
+  * `select * from mysql.user;` return the newly created user 
   * `select * from playground.topic;` returns an error as the table does not exist yet
 * open src/resources/application.properties, uncomment `spring.jpa.hibernate.ddl-auto=create` and comment other similar lines
   * this will instruct hibernate to auto create table structure everytime hibernate get a connection to the mysql
