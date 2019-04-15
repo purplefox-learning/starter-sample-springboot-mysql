@@ -1,0 +1,80 @@
+buildscript {
+    ext {
+        springBootVersion = '2.0.2.RELEASE'
+    }
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        jcenter()
+        maven { url "https://oss.sonatype.org/content/groups/public" }
+    }
+
+    dependencies {
+        classpath "io.spring.gradle:dependency-management-plugin:1.0.4.RELEASE"
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+    }
+}
+
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+
+apply plugin: 'java'
+apply plugin: 'groovy'
+
+apply plugin: 'application'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+group = artifactGroup
+version = artifactVersion
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+//standard source sets
+sourceSets {
+    main {
+        java { srcDir 'src/main/java' }
+        //groovy { srcDir 'src/main/groovy' }
+        resources.srcDir 'src/main/resources'
+    }
+    test {
+        java { srcDir 'src/test/java' }
+        //groovy { srcDir 'src/test/groovy' }
+        resources.srcDir 'src/test/resources'
+    }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    jcenter()
+    maven { url "https://oss.sonatype.org/content/groups/public" }
+}
+
+//BOM = Bill of Materials, which represents the dependencies chain
+//from the top packages that we explicitly declare in dependencies{} block
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:Finchley.RELEASE"
+    }
+}
+
+dependencies {
+    //core spring boot (minimal set)
+    implementation('org.springframework.boot:spring-boot-starter')
+    implementation('org.springframework.boot:spring-boot-starter-web')
+
+    //core productivity
+    implementation('org.projectlombok:lombok') //on intellij we need to install lombok plugin to support that
+    annotationProcessor('org.projectlombok:lombok')
+
+    //core testing
+    testImplementation('org.springframework.boot:spring-boot-starter-test')
+}
+
+//task bootRun automatically works thanks to @SpringBootApplication
+
+//task Run needs this declaration
+mainClassName = 'com.ycm.Application'
