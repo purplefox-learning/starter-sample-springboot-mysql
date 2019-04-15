@@ -1,3 +1,24 @@
+TODO
+```
+* make it a docker, connect to our existing mysql container
+* if necessary, use the mysql docker-compose content below
+* test the inter-container communication
+* test mysql persistence as part of setup-mac-via-ansible project
+* test two-container-in-one-compose scenario
+
+mysql:
+  image: mysql
+  ports:
+    - "3306:3306"
+  environment:
+    - MYSQL_USER=springuser
+    - MYSQL_PASSWORD=ThePassword
+    - MYSQL_DATABASE=db_example
+    - MYSQL_ROOT_PASSWORD=root
+  volumes:
+    - "./conf.d:/etc/mysql/conf.d:ro"
+```
+
 
 This sample application is the minimum set to get an spring boot application started with the following features
 - web container
@@ -19,6 +40,7 @@ Prepare the Environment
 * open src/resources/application.properties, uncomment `spring.jpa.hibernate.ddl-auto=create` and comment other similar lines
   * this will instruct hibernate to auto create table structure everytime hibernate get a connection to the mysql
   * and yes, that also means that we need to change ddl-auto's value to none when the database table is created
+
 
 How to Build
 
