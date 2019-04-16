@@ -2,9 +2,10 @@ package com.ycm.topic;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
+import lombok.extern.slf4j.Slf4j;
 import java.util.Optional;
 
+@Slf4j
 @RestController
 public class TopicController {
 
@@ -13,6 +14,9 @@ public class TopicController {
 
     @RequestMapping("/topics")
     public Iterable<Topic> getAllTopics() {
+        log.info("getAllTopics begins");
+        log.info("getAllTopics testing logging system");
+        log.info("getAllTopics ends");
         return topicService.findAll();
     }
 

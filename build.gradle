@@ -26,6 +26,9 @@ apply plugin: 'application'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
+//the distribution plugin facilitates building archives that serve as distributions of the project
+apply plugin: 'distribution'
+
 group = artifactGroup
 version = artifactVersion
 
@@ -80,13 +83,84 @@ dependencies {
 
 //task bootRun automatically works thanks to @SpringBootApplication
 
-/*
-TODO: if we want to change the boot jar name?
-bootJar {
-    baseName = 'gs-accessing-data-mysql'
-    version =  '0.1.0'
+springBoot {
+    buildInfo()         //this line adds META-INF/build-info.properties in the simple jar
 }
-*/
+
+jar { 
+    enabled = true      //this line builds a simple jar, xxx.jar, which can be found at build/libs
+}  
+
+bootJar {
+    classifier = 'exec' //this line ask gradle to use 'exec' as postfix, xxx-exec.jar so that wont conflict with xxx.jar
+}
+
+//this task specify how the jar can be created
+//when we call gradle with assemble or publishToMavenLocal with this sourceJar task registered,
+//then the xxx-source.jar will be created in the corresponding directory
+task sourceJar(type: Jar) {         //produce a jar that contain only sources, e.g. xxx-sources.jar
+    classifier "sources"
+    from sourceSets.main.allJava    //sourceSets.main.allJava is preferred than main.java
+    //from sourceSets.main.allSource works too
+}
+
+//this task specify how the jar can be created
+//because this task depends on javadoc task, the execution of javadoc will create build/docs folder first
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+//this is to support 'assemble' task. when we run 'gradle assemble', both sourceJar and javadocJar will be called
+//the source code and java doc jars are generated in build/libs directory
+//the simple jar and executable/fat jar are generated separately by other task before this
+artifacts {
+    archives sourceJar
+    archives javadocJar
+}
+
+//=====
+//up to this point, all the jars go to the build/libs folder if we only do `./gradlew clean bootJar`
+//but if we do `./gradlew clean build assemble` or `./gradlew clean build`
+//we will see build/distributions folder being generated
+//in fact, task 'build' = clean + compile + build + bootJar/jar + javadocJar/sourceJar + distZip/distTar + test
+//it is a pretty comprehensive task which should be the default task we run most of the time
+//=====
+
+//create a single zip/tar file with the files specified in the contents{} block
+//three tasks are supported by the distribution plugin: distTar, distZip, assembleDist
+//in this example, we want to include both fat/executable jar and javadoc in the distribution
+//but usually distTar is executed before javadocJar and sourceJar,
+//so we explicitly declare that distTar must run after javadocJar and sourceJar
+distributions {
+    main {
+        baseName = artifactName
+        contents {
+            into('/') {
+                from("$projectDir/build/libs") {
+                    include '*-exec.jar'
+                    include '*-javadoc.jar'
+                    include '*-sources.jar'
+                    fileMode 0755
+                }
+                from("$projectDir/docker") {
+                    include '*'         //include all scripts
+                    exclude '*.zip'     //exclude any zip in this dir, if any
+                    exclude '*.tar.gz'  //exclude any tar/gz in this dir, if any
+                    fileMode 0755
+                }
+            }
+        }
+    }
+}
+
+//this task specify some details on how we want to generate a tar ball file
+distTar {
+    compression Compression.GZIP
+    extension "tar.gz"
+}
+distTar.mustRunAfter javadocJar, sourceJar
 
 //task Run needs this declaration
 mainClassName = 'com.ycm.Application'
+

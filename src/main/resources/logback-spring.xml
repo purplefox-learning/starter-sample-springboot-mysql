@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration debug="true">
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+
+    <property name="log.home" value="./log" />
+
+    <property name="log.default_pattern" value="%d{yyyy-MM-dd HH:mm:ss,SSS} %green([%thread]) %yellow(%-5level) %logger{50} %M - %msg%ex %n "/>
+    <property name="log.default_charset" value="UTF-8"/>
+    <property name="log.default_max_history" value="15"/>
+    <property name="log.default_total_size_cap" value="5GB"/>
+    <property name="log.error_total_size_cap" value="1GB"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level>
+        </filter>
+        <encoder>
+            <pattern>${log.default_pattern}</pattern>
+            <charset>${log.default_charset}</charset>
+        </encoder>
+    </appender>
+
+    <appender name="ACCESS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.home}/access.log</file>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <encoder>
+            <pattern>${log.default_pattern}</pattern>
+            <charset>${log.default_charset}</charset>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.home}/archives/access.%d{yyyy-MM-dd}.gz</fileNamePattern>
+            <maxHistory>${log.default_max_history}</maxHistory>
+            <totalSizeCap>${log.default_total_size_cap}</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="APP" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.home}/app.log</file>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level>
+        </filter>
+        <encoder>
+            <pattern>${log.default_pattern}</pattern>
+            <charset>${log.default_charset}</charset>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.home}/archives/app.%d{yyyy-MM-dd}.gz</fileNamePattern>
+            <maxHistory>${log.default_max_history}</maxHistory>
+            <totalSizeCap>${log.default_total_size_cap}</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.home}/error.log</file>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <encoder>
+            <pattern>${log.default_pattern}</pattern>
+            <charset>${log.default_charset}</charset>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.home}/archives/error.%d{yyyy-MM-dd}.gz</fileNamePattern>
+            <maxHistory>${log.default_max_history}</maxHistory>
+            <totalSizeCap>${log.error_total_size_cap}</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="APP" />
+        <appender-ref ref="ERROR" />
+    </root>
+
+    <!-- customized level for some packages -->
+    <logger name="com.ycm" level="DEBUG"/>
+
+</configuration>

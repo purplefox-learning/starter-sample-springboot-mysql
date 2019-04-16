@@ -1,0 +1,19 @@
+version: "3"
+services:
+  starter-sample-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1000k"
+        max-file: "10"    
+    ports:
+      - "8888:8888"
+    volumes:
+      - ~/logs/starter-sample-service:/opt/starter-sample-service/log
+    extra_hosts:
+      - "mysqlhost:172.17.0.1"
