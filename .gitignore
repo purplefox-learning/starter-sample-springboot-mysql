@@ -14,5 +14,7 @@ build
 target
 
 *.iml
+*.jar
+*/*.jar
 *.zip
 *.tar.gz
