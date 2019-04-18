@@ -40,6 +40,7 @@ This sample application is the minimum set to get an spring boot application sta
   * verify we can access the service from the host, `http localhost:8888/topics` where 'http' is a useful network utility installed via brew
     * if we get `http: error: ConnectionError` that means the service is not up
     * otherwise we should get `HTTP/1.1 200` and some other http specific contents
+  * it is very important to note that `network=host` is not working on both windows or mac, so the best bet is to use default network setting 
   * to see the logs, check out app.log in `~/logs/starter-sample-service`
     * this is achieved by slf4j+logback config within the app, plus the volume mount which mounts the log dir to the host dir  
 
